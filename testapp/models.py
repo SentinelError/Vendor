@@ -16,7 +16,7 @@ class Vendor(models.Model):
     fulfillment_rate = models.FloatField(default=0.0)
 
     def __str__(self):
-        return self.name + '' + self.vendor_code
+        return self.name + ' ' + self.vendor_code
 
 
 class PurchaseOrder(models.Model):
