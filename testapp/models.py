@@ -40,7 +40,7 @@ class HistoricalPerformance(models.Model):
     average_response_time = models.FloatField()
     fulfillment_rate = models.FloatField()
 
-
+# This section is to create an authentication token for users on the site.
 @receiver(post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
