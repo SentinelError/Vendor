@@ -72,22 +72,23 @@ The Vendor model represents a vendor in the system. This model captures various 
 - **on_time_delivery_rate**:
   - **Type**: `FloatField`
   - **Default Value**: 0.0
-  - **Description**: This field represents the percentage of deliveries that the vendor completes on time. This is a performance metric that helps in assessing the reliability of the vendor.
+  - **Description**: Count the number of completed POs delivered on or before delivery_date and divide by the total number of completed POs for that vendor.
 
 - **quality_rating_avg**:
   - **Type**: `FloatField`
   - **Default Value**: 0.0
-  - **Description**: This field stores the average quality rating of the vendor's products or services, based on reviews or assessments.
+  - **Description**: Calculate the average of all quality_rating values for completed POs of the vendor.
 
 - **average_response_time**:
   - **Type**: `FloatField`
   - **Default Value**: 0.0
-  - **Description**: This field measures the average time it takes for the vendor to respond to inquiries or orders. It is a crucial metric for evaluating the responsiveness of the vendor.
+  - **Description**: Compute the time difference between issue_date and acknowledgment_date for each PO, and then find the average of these times for all POs of the vendor.
 
 - **fulfillment_rate**:
   - **Type**: `FloatField`
   - **Default Value**: 0.0
-  - **Description**: This field represents the percentage of orders that the vendor successfully fulfills. A high fulfillment rate indicates a reliable vendor.
+  - **Description**: Divide the number of successfully fulfilled POs (status 'completes' without issues) by the total number of POs issued to the vendor.
+
 
 > [!NOTE]
 > vendor_code was made into the primary key as it is a unique field.
@@ -175,20 +176,29 @@ The `HistoricalPerformance` model captures performance metrics for vendors over 
   - **Related Name**: `historical_performances`
   - **On Delete**: `CASCADE` - Deleting a vendor will also remove all related historical performance records.
 
-- **date**: `DateTimeField`
+- **date**: 
+  - **Type**: `DateTimeField`
   - **Description**: The specific date and time when the performance metrics were recorded. This field is essential for tracking performance trends over time.
 
-- **on_time_delivery_rate**: `FloatField`
-  - **Description**: A float representing the percentage of orders delivered on time by the vendor. This is a critical metric for evaluating vendor punctuality and reliability.
+- **on_time_delivery_rate**:
+  - **Type**: `FloatField`
+  - **Default Value**: 0.0
+  - **Description**: Count the number of completed POs delivered on or before delivery_date and divide by the total number of completed POs for that vendor.
 
-- **quality_rating_avg**: `FloatField`
-  - **Description**: The average quality rating of the vendor's products or services, as rated by customers or an internal quality control system. This average is calculated over a specified period and is key to assessing the quality consistency of a vendor.
+- **quality_rating_avg**:
+  - **Type**: `FloatField`
+  - **Default Value**: 0.0
+  - **Description**: Calculate the average of all quality_rating values for completed POs of the vendor.
 
-- **average_response_time**: `FloatField`
-  - **Description**: Measured in hours, this field records the average time a vendor takes to respond to inquiries or orders. Quick response times are often indicative of good customer service and operational efficiency.
+- **average_response_time**:
+  - **Type**: `FloatField`
+  - **Default Value**: 0.0
+  - **Description**: Compute the time difference between issue_date and acknowledgment_date for each PO, and then find the average of these times for all POs of the vendor.
 
-- **fulfillment_rate**: `FloatField`
-  - **Description**: The rate at which the vendor fulfills orders, expressed as a percentage. This rate helps measure how well the vendor manages inventory and meets customer demand.
+- **fulfillment_rate**:
+  - **Type**: `FloatField`
+  - **Default Value**: 0.0
+  - **Description**: Divide the number of successfully fulfilled POs (status 'completes' without issues) by the total number of POs issued to the vendor.
 
 ## Endpoints
 ### Create Vendor (POST api/vendors/)
@@ -198,18 +208,40 @@ Upon filling the necessary fields and calling POST will create a new vendor
 Navigating to this url will call GET and show all created vendors
 
 ### Retrieve Details of Specific Vendor(GET api/vendors/{vendor_code}/)
-Entering the vender_code will navigate towards requested vendor details page where you can update or delete the instance.
+Entering the vender_code into the url will display the requested vendor details page
+
+### Update Vendor (PUT api/vendors/id/)
+Here you can update the vendor instance.
+
+### Delete Vendor (DELETE api/vendors/id/)
+Once you hit the DELETE button, the vendor instance will be deleted.
 
 > [!NOTE]
 > Due to some logic error, Vendor instances can only be deleted after the deletion of all Historical Performance entries and Purchase Order entries related to the Vendor
 
-- Update Vendor (PUT api/vendors/id/)
-- Delete Vendor (DELETE api/vendors/id/)
-- Create Purchase Order (POST api/purchase_orders/)
-- List All Purchase Orders (GET api/purchase_orders/)
-- List Vendor Purchase Orders (GET api/purchase_orders/id)
-- Get Purchase Order Details (GET api/purchase_orders/id/)
-- Update Purchase Order (PUT api/purchase_orders/id/)
-- Delete Purchase Order (DELETE api/purchase_orders/id/)
-- Acknowledge Purchase Order (POST api/purchase_orders/id/acknowledge)
-- Get Vendor Performance Metrics (GET api/vendors/id/performance)
+### Create Purchase Order (POST api/purchase_orders/)
+Upon filling the necessary fields and calling POST will create a new Purchase Order
+
+### List All Purchase Orders (GET api/purchase_orders/)
+Navigating to this url will call GET and show all created Purchase Orders
+
+### List Vendor Purchase Orders (GET api/purchase_orders/?{?vendor__vendor_code=vendor_code})
+Entering the vendor_code into the url will display the requested Purchase Orders that have been assigned to the that particular vendor. A filter system has been added to make navigating to this page easier.
+
+### Get Purchase Order Details (GET api/purchase_orders/{po_number}/)
+Entering the po_number into the url will display the requested Purchase Order details page.
+
+### Update Purchase Order (PUT api/purchase_orders/{po_number}/)
+Here you can update the Purchase Order instance.
+
+### Delete Purchase Order (DELETE api/purchase_orders/{po_number}/)
+Once you hit the DELETE button, the vendor instance will be deleted.
+
+### Acknowledge Purchase Order (POST api/purchase_orders/{po_number}/acknowledge)
+This function sets the acknowledge_date, allowing the calculation of average response time for vendors.
+
+### Complete Purchase Order (POST api/purchase_orders/{po_number}/complete)
+This function sets the complete_date and status to comeplete, allowing the calculation of on_time_delivery metric and fulfilment_rate for vendors.
+
+### Get Vendor Performance Metrics (GET api/vendors/{vendor_code}/performance)
+This url showcases the metrics of the requested vendor.
