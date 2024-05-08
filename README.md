@@ -35,6 +35,10 @@ The API Endpoints are protected through Session Authentication that can be creat
 
 You can find the above code segment at the bottom of the models.py file.
 
+> [!NOTE]
+> SuperUser Login Credentials
+> username : admin
+> password : admin
 
 ## Models
 To carry out effective Vendor Management, we have created three models :
