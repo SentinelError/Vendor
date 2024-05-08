@@ -191,9 +191,18 @@ The `HistoricalPerformance` model captures performance metrics for vendors over 
   - **Description**: The rate at which the vendor fulfills orders, expressed as a percentage. This rate helps measure how well the vendor manages inventory and meets customer demand.
 
 ## Endpoints
-- Create Vendor (POST api/vendors/)
-- List Vendors (GET api/vendors/)
-- Retrieve Details of Specific Vendor(GET api/vendors/id/)
+### Create Vendor (POST api/vendors/)
+Upon filling the necessary fields and calling POST will create a new vendor
+
+### List Vendors (GET api/vendors/)
+Navigating to this url will call GET and show all created vendors
+
+### Retrieve Details of Specific Vendor(GET api/vendors/{vendor_code}/)
+Entering the vender_code will navigate towards requested vendor details page where you can update or delete the instance.
+
+> [!NOTE]
+> Due to some logic error, Vendor instances can only be deleted after the deletion of all Historical Performance entries and Purchase Order entries related to the Vendor
+
 - Update Vendor (PUT api/vendors/id/)
 - Delete Vendor (DELETE api/vendors/id/)
 - Create Purchase Order (POST api/purchase_orders/)
