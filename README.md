@@ -91,6 +91,8 @@ The Vendor model represents a vendor in the system. This model captures various 
 
 > [!NOTE]
 > vendor_code was made into the primary key as it is a unique field.
+> [!NOTE]
+> Due to some logic error, Vendor instances can only be deleted after the deletion of all Historical Performance entries and Purchase Order entries related to the Vendor
 
 ### Purchase Order
 
