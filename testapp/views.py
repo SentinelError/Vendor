@@ -9,11 +9,12 @@ from .models import Vendor, PurchaseOrder, HistoricalPerformance
 from .serializer import VendorSerializer, PurchaseOrderSerializer, HistoricalPerformanceSerializer
 
 
-# This viewset accomplishes all CRUD functionalities.
+# Manages CRUD operations for Vendor instances with a custom performance retrieval action.
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
 
+    # Returns performance metrics for a Vendor instance.
     @action(detail=True, methods=['get'], url_path='performance')
     def performance(self, request, pk=None):
         vendor = self.get_object()  # Retrieves the Vendor based on vendor_code
@@ -27,16 +28,16 @@ class VendorViewSet(viewsets.ModelViewSet):
         return Response(performance_data, status=status.HTTP_200_OK)
 
 
-# This viewset accomplishes all CRUD functionalities.
+# Manages CRUD operations for PurchaseOrder instances with support for acknowledging and completing orders.
 class PurchaseOrderViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all()
     serializer_class = PurchaseOrderSerializer
 
     # This function is used to obtain purchase orders by querying vendor_code.
-
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ['vendor__vendor_code']
 
+    # Sets acknowledgment date for a PurchaseOrder.
     @action(detail=True, methods=['get','post'])
     def acknowledge(self, request, pk=None):
         purchase_order = self.get_object()
@@ -45,7 +46,7 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
         serializer = PurchaseOrderSerializer(purchase_order)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+    # Marks a PurchaseOrder as complete.
     @action(detail=True, methods=['get', 'post'])
     def complete(self, request, pk=None):
         purchase_order = self.get_object()
@@ -56,6 +57,7 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# Provides read-only access to HistoricalPerformance data with filtering by vendor_code.
 class HistoricalPerformanceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = HistoricalPerformance.objects.all()
     serializer_class = HistoricalPerformanceSerializer

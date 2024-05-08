@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Vendor, PurchaseOrder, HistoricalPerformance
 
+
 # This serilaizer is used to convert DB entries into json to view.
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,8 +15,8 @@ class VendorSerializer(serializers.ModelSerializer):
             self.fields['vendor_code'].read_only = True
 
 
-# This serilaizer is used to convert DB entries into json to view. The added line no.19 is used to select the testproject
-# to fulfill the purchase order.
+# This serilaizer is used to convert DB entries into json to view. The added line no.19 is used to select the
+# testproject to fulfill the purchase order.
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     vendor = serializers.PrimaryKeyRelatedField(queryset=Vendor.objects.all())
 

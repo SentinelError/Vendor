@@ -7,7 +7,9 @@ from django.db.models import F, Avg, ExpressionWrapper
 from django.utils import timezone
 
 
+# Model to represent a Vendor
 class Vendor(models.Model):
+    # Fields to store various attributes of a vendor
     vendor_code = models.CharField(max_length=100, unique=True, primary_key=True)
     name = models.CharField(max_length=255)
     contact_details = models.TextField()
@@ -17,6 +19,7 @@ class Vendor(models.Model):
     average_response_time = models.FloatField(default=0.0)
     fulfillment_rate = models.FloatField(default=0.0)
 
+    # Method to save current performance metrics as a historical record
     def save_historical_performance(self):
         HistoricalPerformance.objects.create(
             vendor=self,
@@ -27,6 +30,7 @@ class Vendor(models.Model):
             fulfillment_rate=self.fulfillment_rate
         )
 
+    # Method to update the on-time delivery rate based on completed orders
     def update_on_time_delivery_rate(self):
         # Filter completed orders for this vendor
         completed_orders = self.purchase_orders.filter(status='Complete')
@@ -45,7 +49,9 @@ class Vendor(models.Model):
             self.save()
             self.save_historical_performance()  # Save the updated rate to the vendor
 
+    # Method to update the average quality rating from received quality ratings
     def update_quality_rating_avg(self):
+        # Filter to obtain only those purchase orders associated with the vendor that have a non-null quality rating
         ratings = self.purchase_orders.filter(quality_rating__isnull=False)
         new_avg = ratings.aggregate(Avg('quality_rating'))['quality_rating__avg'] or 0
         if new_avg != self.quality_rating_avg:
@@ -53,13 +59,18 @@ class Vendor(models.Model):
             self.save()
             self.save_historical_performance()
 
+    # Method to calculate and update average response time for order acknowledgments
     def update_average_response_time(self):
+        # Retrieve purchase orders associated with this vendor that have an acknowledgment date set (not null)
         responses = self.purchase_orders.exclude(acknowledgment_date__isnull=True).annotate(
+            # Calculate the response time for each order by subtracting the issue date from the acknowledgment date
             response_time=ExpressionWrapper(
                 F('acknowledgment_date') - F('issue_date'),
-                output_field=models.DurationField()
+                output_field=models.DurationField() # Specify that the resulting field is a duration type
             )
         )
+        # Aggregate the calculated response times to find their average,
+        # and extract the average value from the resulting dictionary
         average_response = responses.aggregate(average_time=Avg('response_time'))['average_time']
 
         # Ensure the calculation is performed only if average_response is not None
@@ -73,6 +84,7 @@ class Vendor(models.Model):
             self.save()
             self.save_historical_performance()
 
+    # Method to compute and update the fulfillment rate based on completed and rated orders
     def update_fulfillment_rate(self):
         total_orders = self.purchase_orders.count()
         fulfilled_orders = self.purchase_orders.filter(status='Complete', quality_rating__isnull=False).count()
@@ -82,10 +94,12 @@ class Vendor(models.Model):
             self.save()
             self.save_historical_performance()
 
+    # String representation of the Vendor model
     def __str__(self):
         return self.name + ' ' + self.vendor_code
 
 
+# Model to represent a Purchase Order
 class PurchaseOrder(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Pending'),
@@ -106,6 +120,7 @@ class PurchaseOrder(models.Model):
     acknowledgment_date = models.DateTimeField(null=True, blank=True)
 
 
+# Model to store historical performance data of a vendor
 class HistoricalPerformance(models.Model):
     vendor = models.ForeignKey(Vendor, related_name='historical_performances', on_delete=models.CASCADE)
     date = models.DateTimeField()
@@ -113,6 +128,7 @@ class HistoricalPerformance(models.Model):
     quality_rating_avg = models.FloatField()
     average_response_time = models.FloatField()
     fulfillment_rate = models.FloatField()
+
 
 # This section is to create an authentication token for users on the site.
 @receiver(post_save, sender=User)
