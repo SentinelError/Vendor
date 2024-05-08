@@ -7,8 +7,6 @@ This API offers comprehensive functionality for vendor and purchase order manage
 - Authentication
 - Models
 - Endpoints
-- Logic
-- Final words
 
 ## Requirements
 The Vendor Management Application requires the following frameworks:
@@ -203,6 +201,14 @@ The `HistoricalPerformance` model captures performance metrics for vendors over 
 ## Endpoints
 ### Create Vendor (POST api/vendors/)
 Upon filling the necessary fields and calling POST will create a new vendor
+```sh
+{
+    "vendor_code":"000001" # Choose any Vendor Code
+    "name":"Vendor 1"
+    "contact_details":"Vendor 1 Phone : +910000000000"
+    "address":"Vendor 1 Home"
+}
+```
 
 ### List Vendors (GET api/vendors/)
 Navigating to this url will call GET and show all created vendors
