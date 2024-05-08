@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from rest_framework import status
+from django.db.models import F, Avg, ExpressionWrapper
 from .models import Vendor, PurchaseOrder
 from .serializer import VendorSerializer, PurchaseOrderSerializer
 
@@ -31,3 +32,14 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
         purchase_order.save()
         serializer = PurchaseOrderSerializer(purchase_order)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    @action(detail=True, methods=['get', 'post'])
+    def complete(self, request, pk=None):
+        purchase_order = self.get_object()
+        purchase_order.final_delivery_date = timezone.now()
+        purchase_order.status = 'Complete'
+        purchase_order.save()
+        serializer = PurchaseOrderSerializer(purchase_order)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

@@ -18,12 +18,19 @@ class Vendor(models.Model):
     fulfillment_rate = models.FloatField(default=0.0)
 
     def update_on_time_delivery_rate(self):
-        completed_orders = self.purchase_orders.filter(status='completed')
-        on_time_orders = completed_orders.filter(delivery_date__lte=F('order_date'))
+        # Filter completed orders for this vendor
+        completed_orders = self.purchase_orders.filter(status='Complete')
+        # Count orders where final delivery is on or before the expected delivery
+        on_time_orders = completed_orders.filter(final_delivery_date__lte=F('expected_delivery_date')).count()
         total_completed = completed_orders.count()
+
+        # Calculate the on-time delivery rate
         if total_completed > 0:
-            self.on_time_delivery_rate = (on_time_orders.count() / total_completed) * 100
-            self.save()
+            self.on_time_delivery_rate = (on_time_orders / total_completed) * 100
+        else:
+            self.on_time_delivery_rate = 0  # Avoid division by zero
+
+        self.save()  # Save the updated rate to the vendor
 
     def update_quality_rating_avg(self):
         ratings = self.purchase_orders.filter(quality_rating__isnull=False)
@@ -39,11 +46,15 @@ class Vendor(models.Model):
         )
         average_response = responses.aggregate(average_time=Avg('response_time'))['average_time']
         self.average_response_time = average_response.total_seconds() / 3600.0  # convert to hours
+        if average_response is not None:
+            self.average_response_time = average_response.total_seconds() / 3600.0  # Convert to hours
+        else:
+            self.average_response_time = 0
         self.save()
 
     def update_fulfillment_rate(self):
         total_orders = self.purchase_orders.count()
-        fulfilled_orders = self.purchase_orders.filter(status='completed', quality_rating__isnull=False).count()
+        fulfilled_orders = self.purchase_orders.filter(status='Complete', quality_rating__isnull=False).count()
         if total_orders > 0:
             self.fulfillment_rate = (fulfilled_orders / total_orders) * 100
             self.save()
@@ -55,16 +66,25 @@ class Vendor(models.Model):
 
 
 class PurchaseOrder(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('incomplete', 'Incomplete'),
+        ('complete', 'Complete'),
+    )
+
     po_number = models.CharField(max_length=100, unique=True, primary_key=True)
     vendor = models.ForeignKey(Vendor, related_name='purchase_orders', on_delete=models.CASCADE)
-    order_date = models.DateTimeField()
-    delivery_date = models.DateTimeField()
     items = models.JSONField()
     quantity = models.IntegerField()
-    status = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, null=True, blank=True)
     quality_rating = models.FloatField(null=True, blank=True)
+    order_date = models.DateTimeField()
+    expected_delivery_date = models.DateTimeField()
+    final_delivery_date = models.DateTimeField(null=True, blank=True)
     issue_date = models.DateTimeField()
     acknowledgment_date = models.DateTimeField(null=True, blank=True)
+
+
 
 
 
