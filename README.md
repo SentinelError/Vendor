@@ -227,12 +227,64 @@ Upon filling the necessary fields and calling POST will create a new vendor
 ### List Vendors (GET api/vendors/)
 Navigating to this url will call GET and show all created vendors
 
+#### Response
+```sh
+[
+    {
+        "vendor_code": "000001",
+        "name": "Vendor 1",
+        "contact_details": "Vendor 1 Phone : +910000000000",
+        "address": "Vendor 1 Home",
+        "on_time_delivery_rate": 0.0,
+        "quality_rating_avg": 0.0,
+        "average_response_time": 0.0,
+        "fulfillment_rate": 0.0
+    }
+]
+```
+
+
 ### Retrieve Details of Specific Vendor(GET api/vendors/{vendor_code}/)
-Entering the vender_code into the url will display the requested vendor details page
+Entering the vender_code into the url will display the requested vendor details page (example vendor_code = 000001)
+
+#### Response
+```sh
+{
+    "vendor_code": "000001",
+    "name": "Vendor 1",
+    "contact_details": "Vendor 1 Phone : +910000000000",
+    "address": "Vendor 1 Home",
+    "on_time_delivery_rate": 0.0,
+    "quality_rating_avg": 0.0,
+    "average_response_time": 0.0,
+    "fulfillment_rate": 0.0
+}
+```
 
 ### Update Vendor (PUT api/vendors/id/)
 Here you can update the vendor instance.
+#### Request
+```sh
+{
+    "name":"Vendor 2"
+    "contact_details":"Vendor 2 Phone : +910000000000"
+    "address":"Vendor 2 Home"
+}
+```
 
+#### Response
+```sh
+{
+    "vendor_code": "000001",
+    "name": "Vendor 2",
+    "contact_details": "Vendor 2 Phone : +910000000000",
+    "address": "Vendor 2 Home",
+    "on_time_delivery_rate": 0.0,
+    "quality_rating_avg": 0.0,
+    "average_response_time": 0.0,
+    "fulfillment_rate": 0.0
+}
+```
 ### Delete Vendor (DELETE api/vendors/id/)
 Once you hit the DELETE button, the vendor instance will be deleted.
 
@@ -241,27 +293,242 @@ Once you hit the DELETE button, the vendor instance will be deleted.
 
 ### Create Purchase Order (POST api/purchase_orders/)
 Upon filling the necessary fields and calling POST will create a new Purchase Order
-
+#### Request
+```sh
+{
+    "po_number": "111111",
+    "vendor": "000001",
+    "items": [
+        {
+            "item_name": "item1"
+        },
+        {
+            "item_name": "item2"
+        }
+    ],
+    "quantity": 5,
+    "status": "pending",
+    "quality_rating": 100.0,
+    "order_date": "2024-05-09T01:30:00+05:30",
+    "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+    "issue_date": "2024-05-09T01:20:00+05:30",
+}
+```
+#### Response
+```sh
+{
+    "po_number": "111111",
+    "vendor": "000001",
+    "items": [
+        {
+            "item_name": "item1"
+        },
+        {
+            "item_name": "item2"
+        }
+    ],
+    "quantity": 5,
+    "status": "pending",
+    "quality_rating": 100.0,
+    "order_date": "2024-05-09T01:30:00+05:30",
+    "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+    "final_delivery_date": null,
+    "issue_date": "2024-05-09T01:20:00+05:30",
+    "acknowledgment_date": null
+}
+```
 ### List All Purchase Orders (GET api/purchase_orders/)
 Navigating to this url will call GET and show all created Purchase Orders
+#### Response
+```sh
+[
+    {
+        "po_number": "111111",
+        "vendor": "000001",
+        "items": [
+            {
+                "item_name": "item1"
+            },
+            {
+                "item_name": "item2"
+            }
+        ],
+        "quantity": 5,
+        "status": "pending",
+        "quality_rating": 100.0,
+        "order_date": "2024-05-09T01:30:00+05:30",
+        "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+        "final_delivery_date": null,
+        "issue_date": "2024-05-09T01:20:00+05:30",
+        "acknowledgment_date": null
+    }
+]
+```
 
 ### List Vendor Purchase Orders (GET api/purchase_orders/?{?vendor__vendor_code=vendor_code})
 Entering the vendor_code into the url will display the requested Purchase Orders that have been assigned to the that particular vendor. A filter system has been added to make navigating to this page easier.
 
+#### Response
+```sh
+[
+    {
+        "po_number": "111111",
+        "vendor": "000001",
+        "items": [
+            {
+                "item_name": "item1"
+            },
+            {
+                "item_name": "item2"
+            }
+        ],
+        "quantity": 5,
+        "status": "pending",
+        "quality_rating": 100.0,
+        "order_date": "2024-05-09T01:30:00+05:30",
+        "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+        "final_delivery_date": null,
+        "issue_date": "2024-05-09T01:20:00+05:30",
+        "acknowledgment_date": null
+    }
+]
+```
+
 ### Get Purchase Order Details (GET api/purchase_orders/{po_number}/)
 Entering the po_number into the url will display the requested Purchase Order details page.
+#### Response
+```sh
+{
+    "po_number": "111111",
+    "vendor": "000001",
+    "items": [
+        {
+            "item_name": "item1"
+        },
+        {
+            "item_name": "item2"
+        }
+    ],
+    "quantity": 5,
+    "status": "pending",
+    "quality_rating": 100.0,
+    "order_date": "2024-05-09T01:30:00+05:30",
+    "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+    "final_delivery_date": null,
+    "issue_date": "2024-05-09T01:20:00+05:30",
+    "acknowledgment_date": null
+}
+```
 
 ### Update Purchase Order (PUT api/purchase_orders/{po_number}/)
 Here you can update the Purchase Order instance.
-
+#### Request
+```sh
+{
+    "po_number": "111111",
+    "vendor": "000001",
+    "items": [
+        {
+            "item_name": "item2"
+        },
+        {
+            "item_name": "item3"
+        }
+    ],
+    "quantity": 10,
+    "status": "pending",
+    "quality_rating": 100.0,
+    "order_date": "2024-05-09T01:30:00+05:30",
+    "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+    "issue_date": "2024-05-09T01:20:00+05:30",
+}
+```
+#### Response
+```sh
+{
+    "po_number": "111111",
+    "vendor": "000001",
+    "items": [
+        {
+            "item_name": "item2"
+        },
+        {
+            "item_name": "item3"
+        }
+    ],
+    "quantity": 10,
+    "status": "pending",
+    "quality_rating": 100.0,
+    "order_date": "2024-05-09T01:30:00+05:30",
+    "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+    "final_delivery_date": null,
+    "issue_date": "2024-05-09T01:20:00+05:30",
+    "acknowledgment_date": null
+}
+```
 ### Delete Purchase Order (DELETE api/purchase_orders/{po_number}/)
-Once you hit the DELETE button, the vendor instance will be deleted.
+Once you hit the DELETE button, the purchase order instance will be deleted.
 
 ### Acknowledge Purchase Order (POST api/purchase_orders/{po_number}/acknowledge)
 This function sets the acknowledge_date, allowing the calculation of average response time for vendors.
+#### Response
+```sh
+{
+    "po_number": "111111",
+    "vendor": "000001",
+    "items": [
+        {
+            "item_name": "item2"
+        },
+        {
+            "item_name": "item3"
+        }
+    ],
+    "quantity": 10,
+    "status": "pending",
+    "quality_rating": 100.0,
+    "order_date": "2024-05-09T01:30:00+05:30",
+    "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+    "final_delivery_date": null,
+    "issue_date": "2024-05-09T01:20:00+05:30",
+    "acknowledgment_date": "2024-05-09T01:38:48.617171+05:30"
+}
+```
 
 ### Complete Purchase Order (POST api/purchase_orders/{po_number}/complete)
 This function sets the complete_date and status to comeplete, allowing the calculation of on_time_delivery metric and fulfilment_rate for vendors.
+#### Response
+```sh
+{
+    "po_number": "111111",
+    "vendor": "000001",
+    "items": [
+        {
+            "item_name": "item2"
+        },
+        {
+            "item_name": "item3"
+        }
+    ],
+    "quantity": 10,
+    "status": "Complete",
+    "quality_rating": 100.0,
+    "order_date": "2024-05-09T01:30:00+05:30",
+    "expected_delivery_date": "2024-05-10T01:30:00+05:30",
+    "final_delivery_date": "2024-05-09T01:40:17.719765+05:30",
+    "issue_date": "2024-05-09T01:20:00+05:30",
+    "acknowledgment_date": "2024-05-09T01:38:48.617171+05:30"
+}
+```
 
 ### Get Vendor Performance Metrics (GET api/vendors/{vendor_code}/performance)
 This url showcases the metrics of the requested vendor.
+#### Response
+```sh
+{
+    "on_time_delivery_rate": 100.0,
+    "quality_rating_avg": 100.0,
+    "average_response_time": 0.31350476972222224,
+    "fulfillment_rate": 100.0
+}
+```
