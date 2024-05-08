@@ -189,3 +189,18 @@ The `HistoricalPerformance` model captures performance metrics for vendors over 
 
 - **fulfillment_rate**: `FloatField`
   - **Description**: The rate at which the vendor fulfills orders, expressed as a percentage. This rate helps measure how well the vendor manages inventory and meets customer demand.
+
+## Endpoints
+- Create Vendor (POST api/vendors/)
+- List Vendors (GET api/vendors/)
+- Retrieve Details of Specific Vendor(GET api/vendors/id/)
+- Update Vendor (PUT api/vendors/id/)
+- Delete Vendor (DELETE api/vendors/id/)
+- Create Purchase Order (POST api/purchase_orders/)
+- List All Purchase Orders (GET api/purchase_orders/)
+- List Vendor Purchase Orders (GET api/purchase_orders/id)
+- Get Purchase Order Details (GET api/purchase_orders/id/)
+- Update Purchase Order (PUT api/purchase_orders/id/)
+- Delete Purchase Order (DELETE api/purchase_orders/id/)
+- Acknowledge Purchase Order (POST api/purchase_orders/id/acknowledge)
+- Get Vendor Performance Metrics (GET api/vendors/id/performance)
