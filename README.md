@@ -201,12 +201,26 @@ The `HistoricalPerformance` model captures performance metrics for vendors over 
 ## Endpoints
 ### Create Vendor (POST api/vendors/)
 Upon filling the necessary fields and calling POST will create a new vendor
+#### Request
 ```sh
 {
     "vendor_code":"000001" # Choose any Vendor Code
     "name":"Vendor 1"
     "contact_details":"Vendor 1 Phone : +910000000000"
     "address":"Vendor 1 Home"
+}
+```
+#### Response
+```sh
+{
+    "vendor_code": "000001",
+    "name": "Vendor 1",
+    "contact_details": "Vendor 1 Phone : +910000000000",
+    "address": "Vendor 1 Home",
+    "on_time_delivery_rate": 0.0,
+    "quality_rating_avg": 0.0,
+    "average_response_time": 0.0,
+    "fulfillment_rate": 0.0
 }
 ```
 
