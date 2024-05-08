@@ -162,3 +162,33 @@ The `PurchaseOrder` model is used to represent a purchase order within the syste
 > [!NOTE]
 > The function of delivery_date has been split into 2 fields :
 > expected_delivery_date and final_delivery_date
+
+Below is a sample documentation entry for the `HistoricalPerformance` model, which you can include in your project's README.md file. This documentation is intended to describe the purpose and structure of the model clearly and succinctly for developers and stakeholders reviewing the project code.
+
+---
+
+### Historical Performance Model
+
+The `HistoricalPerformance` model captures performance metrics for vendors over time. This model is crucial for tracking and analyzing the historical data of vendors in terms of delivery, quality, response time, and order fulfillment. These metrics aid in assessing the reliability and efficiency of vendors.
+
+#### Model Fields
+
+- **vendor**: `ForeignKey`
+  - **Description**: A foreign key linking to the `Vendor` model. This field establishes a many-to-one relationship, where each vendor can have multiple historical performance records.
+  - **Related Name**: `historical_performances`
+  - **On Delete**: `CASCADE` - Deleting a vendor will also remove all related historical performance records.
+
+- **date**: `DateTimeField`
+  - **Description**: The specific date and time when the performance metrics were recorded. This field is essential for tracking performance trends over time.
+
+- **on_time_delivery_rate**: `FloatField`
+  - **Description**: A float representing the percentage of orders delivered on time by the vendor. This is a critical metric for evaluating vendor punctuality and reliability.
+
+- **quality_rating_avg**: `FloatField`
+  - **Description**: The average quality rating of the vendor's products or services, as rated by customers or an internal quality control system. This average is calculated over a specified period and is key to assessing the quality consistency of a vendor.
+
+- **average_response_time**: `FloatField`
+  - **Description**: Measured in hours, this field records the average time a vendor takes to respond to inquiries or orders. Quick response times are often indicative of good customer service and operational efficiency.
+
+- **fulfillment_rate**: `FloatField`
+  - **Description**: The rate at which the vendor fulfills orders, expressed as a percentage. This rate helps measure how well the vendor manages inventory and meets customer demand.
