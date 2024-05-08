@@ -17,6 +17,16 @@ class Vendor(models.Model):
     average_response_time = models.FloatField(default=0.0)
     fulfillment_rate = models.FloatField(default=0.0)
 
+    def save_historical_performance(self):
+        HistoricalPerformance.objects.create(
+            vendor=self,
+            date=timezone.now(),
+            on_time_delivery_rate=self.on_time_delivery_rate,
+            quality_rating_avg=self.quality_rating_avg,
+            average_response_time=self.average_response_time,
+            fulfillment_rate=self.fulfillment_rate
+        )
+
     def update_on_time_delivery_rate(self):
         # Filter completed orders for this vendor
         completed_orders = self.purchase_orders.filter(status='Complete')
@@ -26,16 +36,22 @@ class Vendor(models.Model):
 
         # Calculate the on-time delivery rate
         if total_completed > 0:
-            self.on_time_delivery_rate = (on_time_orders / total_completed) * 100
+            new_rate = (on_time_orders / total_completed) * 100
         else:
-            self.on_time_delivery_rate = 0  # Avoid division by zero
+            new_rate = 0  # Avoid division by zero
 
-        self.save()  # Save the updated rate to the vendor
+        if new_rate != self.on_time_delivery_rate:
+            self.on_time_delivery_rate = new_rate
+            self.save()
+            self.save_historical_performance()  # Save the updated rate to the vendor
 
     def update_quality_rating_avg(self):
         ratings = self.purchase_orders.filter(quality_rating__isnull=False)
-        self.quality_rating_avg = ratings.aggregate(Avg('quality_rating'))['quality_rating__avg'] or 0
-        self.save()
+        new_avg = ratings.aggregate(Avg('quality_rating'))['quality_rating__avg'] or 0
+        if new_avg != self.quality_rating_avg:
+            self.quality_rating_avg = new_avg
+            self.save()
+            self.save_historical_performance()
 
     def update_average_response_time(self):
         responses = self.purchase_orders.exclude(acknowledgment_date__isnull=True).annotate(
@@ -45,24 +61,29 @@ class Vendor(models.Model):
             )
         )
         average_response = responses.aggregate(average_time=Avg('response_time'))['average_time']
-        self.average_response_time = average_response.total_seconds() / 3600.0  # convert to hours
+
+        # Ensure the calculation is performed only if average_response is not None
+        new_avg_response_time = 0  # Default to 0
         if average_response is not None:
-            self.average_response_time = average_response.total_seconds() / 3600.0  # Convert to hours
-        else:
-            self.average_response_time = 0
-        self.save()
+            new_avg_response_time = average_response.total_seconds() / 3600.0  # Convert to hours
+
+        # Check if there is a change from the current average_response_time
+        if new_avg_response_time != self.average_response_time:
+            self.average_response_time = new_avg_response_time
+            self.save()
+            self.save_historical_performance()
 
     def update_fulfillment_rate(self):
         total_orders = self.purchase_orders.count()
         fulfilled_orders = self.purchase_orders.filter(status='Complete', quality_rating__isnull=False).count()
-        if total_orders > 0:
-            self.fulfillment_rate = (fulfilled_orders / total_orders) * 100
+        new_rate = (fulfilled_orders / total_orders) * 100 if total_orders > 0 else 0
+        if new_rate != self.fulfillment_rate:
+            self.fulfillment_rate = new_rate
             self.save()
+            self.save_historical_performance()
 
     def __str__(self):
         return self.name + ' ' + self.vendor_code
-
-
 
 
 class PurchaseOrder(models.Model):
@@ -83,10 +104,6 @@ class PurchaseOrder(models.Model):
     final_delivery_date = models.DateTimeField(null=True, blank=True)
     issue_date = models.DateTimeField()
     acknowledgment_date = models.DateTimeField(null=True, blank=True)
-
-
-
-
 
 
 class HistoricalPerformance(models.Model):

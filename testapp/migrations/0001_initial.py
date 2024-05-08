@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Vendor',
+            name='testproject',
             fields=[
                 ('vendor_code', models.CharField(max_length=100, primary_key=True, serialize=False, unique=True)),
                 ('name', models.CharField(max_length=255)),

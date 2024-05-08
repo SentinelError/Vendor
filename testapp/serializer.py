@@ -7,14 +7,14 @@ class VendorSerializer(serializers.ModelSerializer):
         model = Vendor
         fields = '__all__'
 
-    # This function is used to prevent changes to vendor_code which is the primary key for the Vendor Model
+    # This function is used to prevent changes to vendor_code which is the primary key for the testproject Model
     def __init__(self,  *args, **kwargs):
         super(VendorSerializer, self).__init__(*args, **kwargs)
         if self.instance is not None:
             self.fields['vendor_code'].read_only = True
 
 
-# This serilaizer is used to convert DB entries into json to view. The added line no.19 is used to select the Vendor
+# This serilaizer is used to convert DB entries into json to view. The added line no.19 is used to select the testproject
 # to fulfill the purchase order.
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     vendor = serializers.PrimaryKeyRelatedField(queryset=Vendor.objects.all())
@@ -23,7 +23,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         model = PurchaseOrder
         fields = '__all__'
 
-    # This function is used to prevent changes to vendor_code which is the primary key for the PurchaseOrder Model
+    # This function is used to prevent changes to po_number which is the primary key for the PurchaseOrder Model
     def __init__(self,  *args, **kwargs):
         super(PurchaseOrderSerializer, self).__init__(*args, **kwargs)
         if self.instance is not None:
