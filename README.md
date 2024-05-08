@@ -163,9 +163,6 @@ The `PurchaseOrder` model is used to represent a purchase order within the syste
 > The function of delivery_date has been split into 2 fields :
 > expected_delivery_date and final_delivery_date
 
-Below is a sample documentation entry for the `HistoricalPerformance` model, which you can include in your project's README.md file. This documentation is intended to describe the purpose and structure of the model clearly and succinctly for developers and stakeholders reviewing the project code.
-
----
 
 ### Historical Performance Model
 
