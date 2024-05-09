@@ -64,7 +64,7 @@ class HistoricalPerformanceViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ['vendor__vendor_code']
 
-    # Function to bulk delete all HistoricalPerformance entries for a particular vendor
+    # Function to bulk delete all HistoricalPerformance entries for a particular vendor to allow vendor deletion
     @action(detail=False, methods=['delete'], url_path='delete-bulk')
     def delete_bulk(self, request):
         filters = {key: request.query_params[key] for key in request.query_params if key in self.filterset_fields}
